@@ -3,6 +3,20 @@ def parse_input(user_input):
     cmd = cmd.strip().lower()
     return cmd, *args
 
+def input_error(func):
+    def inner(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except ValueError:
+            return "Give me name and phone please."
+        except IndexError:
+            return "Enter the argument for the command"
+        except KeyError:
+            return "Contact not found."
+    return inner
+
+
+@input_error
 def add_contact(args, contacts):
     if len(args) != 2:
         return "Error: The 'add' command requires a name and phone number!!!"
@@ -12,6 +26,8 @@ def add_contact(args, contacts):
     contacts[name] = phone
     return "Contact added."
 
+
+@input_error
 def change_contact(args, contacts):
     if len(args) != 2:
         return "Error: The 'change' command requires a name and phone number!!!"
@@ -21,6 +37,8 @@ def change_contact(args, contacts):
     contacts[name] = phone
     return "Contact updated."
 
+
+@input_error
 def show_phone(args, contacts):
     if len(args) != 1:
         return "Error: The 'phone' command only requires a name!!!"
@@ -28,7 +46,9 @@ def show_phone(args, contacts):
     if name not in contacts:
         return f"Error: Contact '{name}' not found!!!"
     return contacts[name]
-    
+
+
+@input_error    
 def show_all(contacts):
     if not contacts:
         return "There are no contacts!"
